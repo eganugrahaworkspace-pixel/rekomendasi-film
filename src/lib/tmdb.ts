@@ -29,13 +29,29 @@ export class TmdbError extends Error {
 
 type Params = Record<string, string | number | undefined>;
 
+/** Strips whitespace and quotes that often sneak in when pasting into a dashboard. */
+const clean = (value: string | undefined) => value?.trim().replace(/^["']|["']$/g, "") || undefined;
+
+/**
+ * Accepts either credential in either variable: a v4 Read Access Token is a
+ * JWT ("eyJ..."), a v3 API Key is 32 hex characters. Pasting the v3 key into
+ * TMDB_ACCESS_TOKEN would otherwise be sent as a Bearer token and fail with 401.
+ */
+function readCredentials() {
+  const values = [clean(process.env.TMDB_ACCESS_TOKEN), clean(process.env.TMDB_API_KEY)];
+  const isV3Key = (v: string) => /^[a-f0-9]{32}$/i.test(v);
+  return {
+    token: values.find((v) => v && !isV3Key(v)),
+    apiKey: values.find((v) => v && isV3Key(v)),
+  };
+}
+
 async function tmdb<T>(
   path: string,
   params: Params = {},
   revalidate = ONE_HOUR,
 ): Promise<T> {
-  const token = process.env.TMDB_ACCESS_TOKEN;
-  const apiKey = process.env.TMDB_API_KEY;
+  const { token, apiKey } = readCredentials();
 
   if (!token && !apiKey) {
     throw new TmdbError(
@@ -62,6 +78,12 @@ async function tmdb<T>(
   });
 
   if (res.status === 404) throw new TmdbError("Not found", 404);
+  if (res.status === 401) {
+    throw new TmdbError(
+      "TMDB rejected the credential (401). Check TMDB_ACCESS_TOKEN / TMDB_API_KEY: the key may be revoked or mistyped.",
+      401,
+    );
+  }
   if (!res.ok) throw new TmdbError(`TMDB request failed: ${res.status} ${path}`, res.status);
 
   return (await res.json()) as T;
