@@ -61,7 +61,7 @@ export default async function HomePage() {
 
       <section className="mx-auto mt-12 grid max-w-7xl items-start gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_minmax(0,36rem)_1fr]">
         <a
-          href="https://github.com/megan0088/rekomendasi-film"
+          href="https://github.com/eganugrahaworkspace-pixel/rekomendasi-film"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden items-center gap-3 pt-2 text-sm text-white/80 hover:text-white lg:flex"

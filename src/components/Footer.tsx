@@ -2,7 +2,7 @@ import { GithubIcon, GlobeIcon, LinkedinIcon } from "./icons";
 
 const LINKS = [
   { href: "https://ega-dev.vercel.app", label: "Portfolio", Icon: GlobeIcon },
-  { href: "https://github.com/megan0088/rekomendasi-film", label: "Source code on GitHub", Icon: GithubIcon },
+  { href: "https://github.com/eganugrahaworkspace-pixel/rekomendasi-film", label: "Source code on GitHub", Icon: GithubIcon },
   { href: "https://linkedin.com/in/ega-nugraha", label: "LinkedIn", Icon: LinkedinIcon },
 ];
 
